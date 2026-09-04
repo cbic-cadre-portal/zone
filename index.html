@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBIC Cadre Allocation Management System</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f2f5f9;
+}
+
+.header {
+    background: #003366;
+    color: white;
+    padding: 15px 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header img {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    background: white;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.header p {
+    margin: 5px 0 0;
+    font-size: 13px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.1);
+    margin-bottom: 20px;
+}
+
+.login-card {
+    max-width: 500px;
+    margin: 60px auto;
+}
+
+h2 {
+    color: #003366;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 6px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+button {
+    border: none;
+    padding: 12px 22px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.login-button {
+    width: 100%;
+    margin-top: 25px;
+    background: #003366;
+    color: white;
+}
+
+.submit-button {
+    background: #003366;
+    color: white;
+    margin-top: 20px;
+    margin-right: 10px;
+}
+
+.autofill-button {
+    background: #0d6efd;
+    color: white;
+    margin-top: 20px;
+    margin-right: 10px;
+}
+
+.pdf-button {
+    background: #198754;
+    color: white;
+    margin-top: 20px;
+    display: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.welcome {
+    background: #e8f1fa;
+    border-left: 5px solid #003366;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.details {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.details td {
+    border: 1px solid #ddd;
+    padding: 11px;
+}
+
+.details td:first-child {
+    width: 30%;
+    font-weight: bold;
+    background: #f5f5f5;
+}
+
+.option {
+    display: grid;
+    grid-template-columns: 50px 1fr 140px;
+    gap: 15px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.code {
+    font-weight: bold;
+    color: #003366;
+}
+
+.success {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    background: #e8f7ee;
+    border: 1px solid #a3cfbb;
+    color: #146c43;
+    border-radius: 5px;
+}
+
+@media(max-width:650px) {
+    .option {
+        grid-template-columns: 40px 1fr;
+    }
+
+    .option select {
+        grid-column: 2;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <img src="cbic-logo.png"
+         alt="CBIC Logo"
+         onerror="this.style.display='none'">
+    <div>
+        <h1>Cadre Allocation Management System</h1>
+        <p>Central Board of Indirect Taxes and Customs</p>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- ================= LOGIN ================= -->
+<div id="loginPage" class="card login-card">
+    <h2>Candidate Login</h2>
+    <p>Enter any details to continue to the portal.</p>
+
+    <label>Roll Number</label>
+    <input type="text" id="roll" placeholder="Enter Roll Number">
+
+    <label>Mobile Number</label>
+    <input type="text" id="mobile" placeholder="Enter Mobile Number">
+
+    <label>Email</label>
+    <input type="text" id="email" placeholder="Enter Email">
+
+    <button type="button" class="login-button" onclick="doLogin()">
+        LOGIN
+    </button>
+</div>
+
+<!-- ================= PORTAL ================= -->
+<div id="portalPage" class="hidden">
+    <div class="welcome">
+        <strong>Login Successful</strong><br>
+        Welcome to the Cadre Allocation Management System.
+    </div>
+
+    <!-- MY DETAILS -->
+    <div class="card">
+        <h2>My Details</h2>
+        <table class="details">
+            <tr>
+                <td>Roll Number</td>
+                <td id="myRoll"></td>
+            </tr>
+            <tr>
+                <td>Mobile Number</td>
+                <td id="myMobile"></td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td id="myEmail"></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- OPTIONS -->
+    <div class="card">
+        <h2>CCA Preferences (Annexure-I)</h2>
+        <p>Assign priority ranks (1 to 25) or click <strong>Auto-Fill South First</strong> to set your ordered preferences instantly.</p>
+
+        <div id="ccaOptions"></div>
+
+        <button type="button" class="autofill-button" onclick="autoFillPreferences()">
+            AUTO-FILL SOUTH FIRST
+        </button>
+
+        <button type="button" class="submit-button" onclick="submitOptions()">
+            SUBMIT OPTIONS
+        </button>
+
+        <button type="button" id="pdfButton" class="pdf-button" onclick="downloadPDF()">
+            DOWNLOAD OPTIONS PDF
+        </button>
+
+        <div id="success" class="success">
+            Options submitted successfully. Click "Download Options PDF" to get your confirmation form.
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script>
+/* ========================================================
+   OFFICIAL CBIC ANNEXURE-I CADRE CONTROLLING AUTHORITIES
+======================================================== */
+const cca = [
+    ["A", "Bengaluru CGST"],
+    ["B", "Bhopal CGST"],
+    ["C", "Bhubaneshwar CGST"],
+    ["D", "Chandigarh CGST"],
+    ["E", "Chennai CGST"],
+    ["F", "Delhi CGST"],
+    ["G", "Goa CGST"],
+    ["H", "Guwahati CGST"],
+    ["I", "Hyderabad CGST"],
+    ["J", "Jaipur CGST"],
+    ["K", "Kolkata CGST"],
+    ["L", "Lucknow CGST"],
+    ["M", "Mumbai CGST"],
+    ["N", "Pune CGST"],
+    ["O", "Ranchi CGST"],
+    ["P", "Thiruvananthapuram CGST"],
+    ["Q", "Vadodara CGST"],
+    ["R", "Chennai Customs"],
+    ["S", "Goa Customs"],
+    ["T", "Kolkata Customs"],
+    ["U", "Mumbai Customs"],
+    ["V", "Thiruvananthapuram (Cochin) Customs"],
+    ["W", "Vishakhapatnam Customs"],
+    ["X", "Directorate General of Performance Management"],
+    ["Y", "Central Bureau of Narcotics"]
+];
+
+/* South > West/Central > North > East > North-East Order */
+const defaultRanks = {
+    "W": 1,   // Vishakhapatnam Customs
+    "I": 2,   // Hyderabad CGST
+    "E": 3,   // Chennai CGST
+    "R": 4,   // Chennai Customs
+    "A": 5,   // Bengaluru CGST
+    "P": 6,   // Thiruvananthapuram CGST
+    "V": 7,   // Thiruvananthapuram (Cochin) Customs
+    "C": 8,   // Bhubaneshwar CGST
+    "G": 9,   // Goa CGST
+    "S": 10,  // Goa Customs
+    "N": 11,  // Pune CGST
+    "M": 12,  // Mumbai CGST
+    "U": 13,  // Mumbai Customs
+    "Q": 14,  // Vadodara CGST
+    "B": 15,  // Bhopal CGST
+    "F": 16,  // Delhi CGST
+    "X": 17,  // DGPM
+    "J": 18,  // Jaipur CGST
+    "D": 19,  // Chandigarh CGST
+    "L": 20,  // Lucknow CGST
+    "Y": 21,  // CBN
+    "K": 22,  // Kolkata CGST
+    "T": 23,  // Kolkata Customs
+    "O": 24,  // Ranchi CGST
+    "H": 25   // Guwahati CGST
+};
+
+let submitted = [];
+
+function doLogin() {
+    const roll = document.getElementById("roll").value;
+    const mobile = document.getElementById("mobile").value;
+    const email = document.getElementById("email").value;
+
+    document.getElementById("myRoll").textContent = roll;
+    document.getElementById("myMobile").textContent = mobile;
+    document.getElementById("myEmail").textContent = email;
+
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("portalPage").classList.remove("hidden");
+
+    createOptions();
+}
+
+function createOptions() {
+    const box = document.getElementById("ccaOptions");
+    box.innerHTML = "";
+
+    cca.forEach(function(item) {
+        let code = item[0];
+        let name = item[1];
+
+        let numbers = "";
+        for(let i = 1; i <= 25; i++) {
+            numbers += `<option value="${i}">${i}</option>`;
+        }
+
+        box.innerHTML += `
+            <div class="option">
+                <div class="code">${code}</div>
+                <div>${name}</div>
+                <select class="preference" id="select_${code}" data-code="${code}" data-name="${name}">
+                    <option value="">Not Selected</option>
+                    ${numbers}
+                </select>
+            </div>
+        `;
+    });
+}
+
+function autoFillPreferences() {
+    Object.keys(defaultRanks).forEach(function(code) {
+        const select = document.getElementById("select_" + code);
+        if (select) {
+            select.value = defaultRanks[code];
+        }
+    });
+}
+
+function submitOptions() {
+    const selects = document.querySelectorAll(".preference");
+    let result = [];
+
+    selects.forEach(function(select) {
+        if(select.value !== "") {
+            result.push({
+                preference: Number(select.value),
+                code: select.dataset.code,
+                name: select.dataset.name
+            });
+        }
+    });
+
+    if(result.length === 0) {
+        alert("Please select at least one option.");
+        return;
+    }
+
+    const nums = result.map(x => x.preference);
+    const duplicate = nums.some((x, i) => nums.indexOf(x) !== i);
+
+    if(duplicate) {
+        alert("Please ensure each preference number is unique (no duplicate ranks).");
+        return;
+    }
+
+    result.sort((a, b) => a.preference - b.preference);
+    submitted = result;
+
+    document.getElementById("success").style.display = "block";
+    document.getElementById("pdfButton").style.display = "inline-block";
+
+    alert("Options submitted successfully.");
+}
+
+function downloadPDF() {
+    if(submitted.length === 0) {
+        alert("Submit your options first.");
+        return;
+    }
+
+    if(typeof window.jspdf === "undefined") {
+        const script = document.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+
+        script.onload = function() {
+            makePDF();
+        };
+
+        script.onerror = function() {
+            alert("Could not load the PDF library. Please connect to the internet and try again.");
+        };
+
+        document.head.appendChild(script);
+    } else {
+        makePDF();
+    }
+}
+
+function makePDF() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    const width = pdf.internal.pageSize.getWidth();
+    let y = 20;
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(15);
+    pdf.text("CENTRAL BOARD OF INDIRECT TAXES AND CUSTOMS", width / 2, y, { align: "center" });
+
+    y += 9;
+    pdf.setFontSize(12);
+    pdf.text("CADRE ALLOCATION MANAGEMENT SYSTEM", width / 2, y, { align: "center" });
+
+    y += 15;
+    pdf.line(15, y, width - 15, y);
+
+    y += 15;
+    pdf.setFontSize(14);
+    pdf.text("OPTIONS SUBMISSION", width / 2, y, { align: "center" });
+
+    y += 15;
+    pdf.setFontSize(11);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("Candidate Details", 15, y);
+
+    y += 8;
+    pdf.setFont("helvetica", "normal");
+    pdf.text("Roll Number: " + document.getElementById("myRoll").textContent, 15, y);
+
+    y += 7;
+    pdf.text("Mobile Number: " + document.getElementById("myMobile").textContent, 15, y);
+
+    y += 7;
+    pdf.text("Email: " + document.getElementById("myEmail").textContent, 15, y);
+
+    y += 7;
+    pdf.text("Submission Date: " + new Date().toLocaleString(), 15, y);
+
+    y += 15;
+
+    // Table heading
+    pdf.setFont("helvetica", "bold");
+    pdf.rect(15, y, 180, 10);
+    pdf.text("Preference", 20, y + 7);
+    pdf.text("Code", 55, y + 7);
+    pdf.text("CCA / Zone", 85, y + 7);
+
+    y += 10;
+    pdf.setFont("helvetica", "normal");
+
+    submitted.forEach(function(item) {
+        if(y > 270) {
+            pdf.addPage();
+            y = 20;
+        }
+
+        pdf.rect(15, y, 180, 10);
+        pdf.text(String(item.preference), 25, y + 7);
+        pdf.text(item.code, 55, y + 7);
+        pdf.text(item.name, 85, y + 7);
+        y += 10;
+    });
+
+    y += 15;
+    if(y > 255) {
+        pdf.addPage();
+        y = 20;
+    }
+
+    pdf.setFont("helvetica", "bold");
+    pdf.text("Declaration", 15, y);
+
+    y += 8;
+    pdf.setFont("helvetica", "normal");
+    const declaration = "The above preferences have been submitted through the Cadre Allocation Management System for demonstration purposes.";
+    pdf.text(pdf.splitTextToSize(declaration, 180), 15, y);
+
+    pdf.setFontSize(9);
+    pdf.text("Computer-generated document - Mock/Demo System", width / 2, 285, { align: "center" });
+
+    const roll = document.getElementById("myRoll").textContent.trim();
+    pdf.save("CCA_Options_" + (roll || "Candidate") + ".pdf");
+}
+</script>
+
+</body>
+          </html>
+          
